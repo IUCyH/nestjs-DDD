@@ -15,7 +15,7 @@ export const OrmConfig: TypeOrmModuleOptions = {
         timezone: "Z",
         dateStrings: true
     },
-    entities: [__dirname + "/../**/*.{js,ts}"],
+    entities: [__dirname + "/../**/*.entity.{js,ts}"],
     subscribers: [],
     migrations: []
 };

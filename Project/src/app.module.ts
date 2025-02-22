@@ -4,9 +4,12 @@ import { OrmConfig } from "./configs/orm.config";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 
+import { UserModule } from "./modules/user/user.module";
+
 @Module({
     imports: [
-        TypeOrmModule.forRoot(OrmConfig)
+        TypeOrmModule.forRoot(OrmConfig),
+        UserModule
     ],
     controllers: [AppController],
     providers: [AppService],
