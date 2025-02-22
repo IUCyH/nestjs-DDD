@@ -3,6 +3,7 @@ import {
     PrimaryGeneratedColumn,
     Column
 } from "typeorm";
+import { CreateUserDto } from "../dto/create-user.dto";
 
 @Entity()
 export class User {
@@ -17,4 +18,15 @@ export class User {
 
     @Column("varchar", { length: 8 })
     password: string = "";
+
+    private constructor() {}
+
+    static createFrom(dto: CreateUserDto) {
+        const user = new User();
+        user.name = dto.name;
+        user.email = dto.email;
+        user.password = dto.password;
+
+        return user;
+    }
 }
