@@ -1,10 +1,12 @@
 import { join } from "path";
 import { Module } from "@nestjs/common";
+import { APP_FILTER } from "@nestjs/core";
 import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { SnakeNamingStrategy } from "typeorm-naming-strategies";
 import { WinstonModule } from "nest-winston";
 import { LogConfig } from "./configs/log.config";
+import { ResponseExceptionLoggingFilter } from "./common/exceptionFilter/response-exception-logging.filter";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 
@@ -42,6 +44,12 @@ import { UserModule } from "./modules/user/user.module";
         UserModule
     ],
     controllers: [AppController],
-    providers: [AppService]
+    providers: [
+        AppService,
+        {
+            provide: APP_FILTER,
+            useClass: ResponseExceptionLoggingFilter
+        }
+    ]
 })
 export class AppModule {}
