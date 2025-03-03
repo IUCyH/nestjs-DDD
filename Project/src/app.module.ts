@@ -1,17 +1,47 @@
+import { join } from "path";
 import { Module } from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { OrmConfig } from "./configs/orm.config";
+import { SnakeNamingStrategy } from "typeorm-naming-strategies";
+import { WinstonModule } from "nest-winston";
+import { LogConfig } from "./configs/log.config";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
 
+import { GlobalSharedModule } from "./shared/global-shared.module";
 import { UserModule } from "./modules/user/user.module";
 
 @Module({
     imports: [
-        TypeOrmModule.forRoot(OrmConfig),
+        ConfigModule.forRoot({
+            cache: true,
+            isGlobal: true
+        }),
+        TypeOrmModule.forRootAsync({
+            useFactory: () => ({
+                type: "mariadb",
+                host: "localhost",
+                port: 3306,
+                username: process.env.DB_USER,
+                password: process.env.DB_PASSWORD,
+                database: "ddd_demo",
+                synchronize: false,
+                logging: true,
+                namingStrategy: new SnakeNamingStrategy(),
+                extra: {
+                    timezone: "Z",
+                    dateStrings: true
+                },
+                entities: [join(__dirname, "/**/*.entity.{js,ts}")],
+                subscribers: [],
+                migrations: []
+            })
+        }),
+        WinstonModule.forRoot(LogConfig),
+        GlobalSharedModule,
         UserModule
     ],
     controllers: [AppController],
-    providers: [AppService],
+    providers: [AppService]
 })
 export class AppModule {}

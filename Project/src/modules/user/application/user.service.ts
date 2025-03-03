@@ -4,6 +4,7 @@ import { DataSource } from "typeorm";
 import { USER_REPOSITORY } from "../infrastructure/user.repository";
 import { IUserRepository } from "../domain/user.repository.interface";
 import { CreateUserDto } from "../dto/create-user.dto";
+import { UserDto } from "../dto/user.dto";
 import { User } from "../domain/user.entity";
 
 @Injectable()
@@ -16,7 +17,12 @@ export class UserService {
     ) {}
 
     async getUser(id: number) {
-        const user = await this.userRepository.findOne(id);
+        const result = await this.userRepository.findOne(id);
+        if(!result) {
+            return null;
+        }
+
+        const user = new UserDto(result);
         return user;
     }
 
